@@ -164,3 +164,6 @@ ggplot(tt_step3, aes(interval, steps)) + facet_grid(. ~ datetype) +
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
+
+####----------------------------------------*End of Assignment 1*----------------------------------------
+*Many thanks to your evaluations and looking for your more recommendations*

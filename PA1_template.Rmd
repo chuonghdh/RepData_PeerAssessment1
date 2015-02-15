@@ -150,3 +150,6 @@ ggplot(tt_step3, aes(interval, steps)) + facet_grid(. ~ datetype) +
   geom_line() +
   ggtitle(expression(atop("Average daily activity pattern", atop(italic("Weekends vs Weekdays")))))
 ```
+
+####----------------------------------------*End of Assignment 1*----------------------------------------
+*Many thanks to your evaluations and looking for your more recommendations*
