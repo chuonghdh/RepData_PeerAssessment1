@@ -14,8 +14,8 @@ activity <- read.csv("activity.csv")
 
 
 ```r
-tt_step <- aggregate(activity$steps, by = list(activity$date),FUN = "sum",na.rm=TRUE)
-names(tt_step) <- c("date","steps")
+tt_step1 <- aggregate(activity$steps, by = list(activity$date),FUN = "sum",na.rm=TRUE)
+names(tt_step1) <- c("date","steps")
 ```
 
 **2. Make a histogram of the total number of steps taken each day**
@@ -23,7 +23,7 @@ names(tt_step) <- c("date","steps")
 
 ```r
 library(ggplot2)
-ggplot(tt_step, aes(date, steps)) + 
+ggplot(tt_step1, aes(date, steps)) + 
   geom_bar(stat = "identity", ) +
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5, size=8)) +
   ggtitle(expression(atop("Total Number of Steps Taken per Day", atop(italic("Oct-01-2012 to Nov-30-2012")))))
@@ -37,8 +37,8 @@ ggplot(tt_step, aes(date, steps)) +
 
 
 ```r
-tt_step_mean <- mean(tt_step$steps)
-tt_step_median <- median(tt_step$steps)
+tt_step1_mean <- mean(tt_step1$steps)
+tt_step1_median <- median(tt_step1$steps)
 ```
 
 *Report*
@@ -69,3 +69,98 @@ highest_interval <- avg_acrs_all_day[avg_acrs_all_day$steps == max(avg_acrs_all_
 ```
 
 *Report:* The 5-minute interval contains the maximum number of steps is ***835***
+
+###Problem 3 - Imputing missing values
+
+**1. Calculate and report the total number of missing values in the dataset (the total number of rows with NAs)**
+
+*Calculate*
+
+
+```r
+tt_num_missing_values <- sum(is.na(activity$steps))
+```
+
+*Report:* The total number of missing values in the dataset is ***2304***
+
+
+**2 & 3. Devise a strategy for filling in all of the missing values in the dataset.And create a new dataset with the missing data filled in**
+- Author select **the mean for that 5-minute interval** as the filling strategy
+_ **the mean for that 5-minute interval** can be infer from problem 2 with dataset **avg_acrs_all_day**
+
+*Calculate*
+
+
+```r
+# Initialize filled dataset same as activity dataset
+filled_dataset <- activity 
+
+# Return interval values corresponding to NA steps in activity dataset
+na_intervals <- activity[is.na(activity$steps),"interval"]
+
+# Replace NA steps in filled_dataset by the average for that interval in avg_acrs_all_day dataset
+filled_dataset[is.na(filled_dataset$steps),"steps"] <- avg_acrs_all_day[match(na_intervals,avg_acrs_all_day$interval),"steps"]
+```
+
+**4.1 Make a histogram of the total number of steps taken each day**
+
+
+```r
+tt_step2 <- aggregate(filled_dataset$steps, by = list(filled_dataset$date),FUN = "sum",na.rm=TRUE)
+names(tt_step2) <- c("date","steps")
+
+ggplot(tt_step2, aes(date, steps)) + 
+  geom_bar(stat = "identity", ) +
+  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5, size=8)) +
+  ggtitle(expression(atop("Total Number of Steps Taken per Day", atop(italic("Oct-01-2012 to Nov-30-2012")))))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
+
+**4.2 Calculate and report the mean and median total number of steps taken per day**
+
+
+```r
+tt_step2_mean <- mean(tt_step2$steps)
+tt_step2_median <- median(tt_step2$steps)
+```
+
+*Report*
+
+- Mean of the total number of steps taken per day is ***1.0766189\times 10^{4}***
+- Median of the total number of steps taken per day is ***1.0766189\times 10^{4}***
+
+**4.3 Do these values differ from the estimates from the first part of the assignment?**
+
+*Answer:* Yes, these values different from the estimates in first part
+
+**4.4 What is the impact of imputing missing data on the estimates of the total daily number of steps?**
+
+*Answer:* 
+
+- The mean increased : ***1411.959171***
+- The median increased : ***371.1886792***
+
+###Problem 4 - Are there differences in activity patterns between weekdays and weekends?
+
+**1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend"**
+
+
+```r
+datetype <- sapply(as.Date(filled_dataset$date),function(x) {if(weekdays(x) %in% c("Saturday","Sunday")) "weekends" else "weekdays"})
+filled_dataset$datetype <- datetype
+```
+
+**2. Make a plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.**
+
+
+```r
+tt_step3 <- aggregate(filled_dataset$steps, by = list(filled_dataset$datetype, filled_dataset$interval),FUN = "mean",na.rm=TRUE)
+names(tt_step3) <- c("datetype","interval","steps")
+
+ggplot(tt_step3, aes(interval, steps)) + facet_grid(. ~ datetype) +
+  geom_line() +
+  ggtitle(expression(atop("Average daily activity pattern", atop(italic("Weekends vs Weekdays")))))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
