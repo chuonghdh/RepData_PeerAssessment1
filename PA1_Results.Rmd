@@ -9,21 +9,21 @@ output:
 
 ###Loading and preprocessing the data
 
-```{r}
+```{r, cache=TRUE}
 activity <- read.csv("activity.csv")
 ```
 
 ###Problem 1 - What is mean total number of steps taken per day?
 **1. Calculate the total number of steps taken per day**
 
-```{r}
+```{r, cache=TRUE}
 tt_step <- aggregate(activity$steps, by = list(activity$date),FUN = "sum",na.rm=TRUE)
 names(tt_step) <- c("date","steps")
 ```
 
 **2. Make a histogram of the total number of steps taken each day**
 
-```{r}
+```{r, cache=TRUE}
 library(ggplot2)
 ggplot(tt_step, aes(date, steps)) + 
   geom_bar(stat = "identity", ) +
@@ -36,7 +36,7 @@ ggplot(tt_step, aes(date, steps)) +
 
 *Calculate*
 
-```{r}
+```{r, cache=TRUE}
 tt_step_mean <- mean(tt_step$steps)
 tt_step_median <- median(tt_step$steps)
 ```
@@ -50,7 +50,7 @@ tt_step_median <- median(tt_step$steps)
 
 **1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis) **
 
-```{r}
+```{r, cache=TRUE}
 avg_acrs_all_day <- aggregate(activity$step, by = list(activity$interval),FUN = "mean",na.rm=TRUE)
 names(avg_acrs_all_day) <- c("interval", "steps")
 ggplot(avg_acrs_all_day, aes(interval, steps)) + 
@@ -60,7 +60,7 @@ ggplot(avg_acrs_all_day, aes(interval, steps)) +
 
 **2. Find 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps**
 
-```{r}
+```{r, cache=TRUE}
 highest_interval <- avg_acrs_all_day[avg_acrs_all_day$steps == max(avg_acrs_all_day$steps),"interval"]
 ```
 
